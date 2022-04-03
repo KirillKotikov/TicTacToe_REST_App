@@ -49,7 +49,7 @@
                             <h5 class="result">${gameHistoryNotEmpty}</h5>
                         </#if><br/>
                         <div>
-                        <input type="text" class="form-control"
+                        <input type="number" class="form-control"
                                id="id" name="id" placeholder="Id истории игры" autofocus
                                value="<#if id??>${id}</#if>" required/><br/>
                         <button type="submit" class="btn btn-primary">Поиск и воспроизведение истории игры по id
