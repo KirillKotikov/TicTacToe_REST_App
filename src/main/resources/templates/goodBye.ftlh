@@ -46,14 +46,14 @@
                             <h5 class="result">${gameHistoryIsEmpty}</h5>
                         </#if>
                         <#if gameHistoryNotEmpty??>
-                            <h5 class="result">${gameHistoryNotEmpty}</h5>
+                        <h5 class="result">${gameHistoryNotEmpty}</h5>
                         </#if><br/>
                         <div>
-                        <input type="number" class="form-control"
-                               id="id" name="id" placeholder="Id истории игры" autofocus
-                               value="<#if id??>${id}</#if>" required/><br/>
-                        <button type="submit" class="btn btn-primary">Поиск и воспроизведение истории игры по id
-                        </button>
+                            <input type="number" class="form-control"
+                                   id="id" name="id" placeholder="Id истории игры" autofocus
+                                   value="<#if id??>${id}</#if>" required/><br/>
+                            <button type="submit" class="btn btn-primary">Поиск и воспроизведение истории игры по id
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -62,12 +62,21 @@
             <div class="col">
                 <#if gameHistory??>
                     <h5 class="result">История игры c id = ${gameHistory.id}:</h5><br/>
-                    <h6 class="history">${gameHistory.firstPlayer}</h6>
-                    <h6 class="history">${gameHistory.secondPlayer}</h6>
-                    <#list steps as step>
-                        <h6 class="history">${step}</h6>
+                    <h6 class="history">Player: id="${gameHistory.firstPlayer.id}" name="${gameHistory.firstPlayer.name}
+                        " symbol="${gameHistory.firstPlayer.symbol}"</h6>
+                    <h6 class="history">Player: id="${gameHistory.secondPlayer.id}"
+                        name="${gameHistory.secondPlayer.name}" symbol="${gameHistory.secondPlayer.symbol}"</h6>
+                    <#list gameHistory.steps as step>
+                        <h6 class="history">Step: num="${step.num}" playerId="${step.player.id}">${step.fieldCell}<</h6>
                     </#list>
-                    <h6 class="history">${gameHistory.gameResult}</h6>
+                    <#if draw??>
+                        <h6 class="history">${draw}</h6>
+                    <#else>
+                        <h6 class="history">
+                            GameResult: Player id="${gameHistory.winner.id}" name="${gameHistory.winner.name}"
+                            symbol="${gameHistory.winner.symbol}"
+                        </h6>
+                    </#if>
                 </#if>
                 <#if gameHistoryNotFound??>
                     <h6 class="red">${gameHistoryNotFound}</h6>

@@ -8,18 +8,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kotikov.tictactoe_rest_app.exceptions.*;
 import ru.kotikov.tictactoe_rest_app.services.GameService;
+import ru.kotikov.tictactoe_rest_app.services.util.TicTacToeFields;
 
 @Controller
 public class GameController {
 
     @Autowired
-    private GameService gameService;
+    private GameService ticTacToeService;
+
+    @Autowired
+    private TicTacToeFields fields;
 
     // Отображает страницу с вводом имен игроков
     @GetMapping("/gameplay")
     public String startGame() {
-        gameService.clearAll();
-        gameService.newPlayers();
+        ticTacToeService.clearAll();
+        ticTacToeService.newPlayers();
         return "start";
     }
 
@@ -32,11 +36,11 @@ public class GameController {
     ) {
         // проверяем имена на валидность
         try {
-            gameService.validInputNames(nameX, nameO, model);
+            ticTacToeService.validInputTwoNames(nameX, nameO, model);
             // сохраняем имена
-            gameService.setNames(nameX, nameO);
+            ticTacToeService.setNamesForTwoPlayers(nameX, nameO);
             // выдаем ответ из шаблона /gameplay/field
-            return gameService.getFieldViewTemplate(model);
+            return ticTacToeService.getFieldViewTemplate(model);
         } catch (FirstPlayerNameNullException e) {
             model.addAttribute("nameXNull", e.getMessage());
             return "start";
@@ -58,24 +62,24 @@ public class GameController {
     ) {
         // проверяем не занято ли поле или введеные неверные координаты
         try {
-            gameService.needRepeatField(coordinate, model);
+            ticTacToeService.needRepeatField(coordinate, model);
         } catch (CoordinatesNotValidException | FieldsCellOccupiedException e) {
             model.addAttribute("message", e.getMessage());
             return "field";
         }
         // внесение хода на поле
-        gameService.drawMove(gameService.coordinateValid(coordinate)[0],
-                gameService.coordinateValid(coordinate)[1]);
+        ticTacToeService.drawMove(ticTacToeService.coordinateValid(coordinate)[0],
+                ticTacToeService.coordinateValid(coordinate)[1]);
         // ищем победителя или ничью
-        if (gameService.getMovesCounter()> 4 && gameService.getMovesCounter() < 9) {
-            gameService.setGameOver(gameService.winnerSearch(gameService.getPLAYING_FIELD()));
-        } else if (gameService.getMovesCounter() > 8) gameService.setGameOver(true);
+        if (fields.getMovesCounter()> 4 && fields.getMovesCounter() < 9) {
+            fields.setGameOver(ticTacToeService.winnerSearch(fields.getPLAYING_FIELD()));
+        } else if (fields.getMovesCounter() > 8) fields.setGameOver(true);
         // Выводим результаты если игра окончена
-        if (gameService.isGameOver()) {
-            return gameService.result(model);
+        if (fields.isGameOver()) {
+            return ticTacToeService.result(model);
         } else { // продолжаем игру если она не окончена
-            gameService.setMovesCounter((byte) (gameService.getMovesCounter() + 1));
-            return gameService.getFieldViewTemplate(model);
+            fields.setMovesCounter((byte) (fields.getMovesCounter() + 1));
+            return ticTacToeService.getFieldViewTemplate(model);
         }
     }
 
@@ -87,15 +91,15 @@ public class GameController {
         // если игрок решил сохранить игру
         if (saveH.equalsIgnoreCase("Да")) {
             // Сохраняем историю игры в базу данных
-            gameService.saveHistory();
+            ticTacToeService.saveHistory();
         }
         // если хочет начать новую игру
         if (newGame.equalsIgnoreCase("Да")) {
             // очищаем все поля игры
-            gameService.clearAll();
-            model.addAttribute("name", gameService.getMovePlayer().getName());
-            model.addAttribute("field", gameService.showPlayingField(gameService.getPLAYING_FIELD()));
-            gameService.getStringSymbol(model);
+            ticTacToeService.clearAll();
+            model.addAttribute("name", ticTacToeService.getMovePlayer().getName());
+            model.addAttribute("field", ticTacToeService.showPlayingField(fields.getPLAYING_FIELD()));
+            ticTacToeService.getStringSymbol(model);
             return "/field";
         } else // закрытие игры
             model.addAttribute("save", "История игры успешно сохранена в базу данных!");
@@ -107,21 +111,21 @@ public class GameController {
     @PostMapping("/gameplay/final-result")
     public String finalResult(@RequestParam(name = "saveR") String saveR, Model model) {
         if (saveR.equalsIgnoreCase("Да")) {
-            gameService.saveRating(model);
+            ticTacToeService.saveRating(model);
         }
-        gameService.getRating(model);
+        ticTacToeService.getRating(model);
         model.addAttribute("continue", "Можно начать новую игру с внесением новых имен ;)");
-        gameService.gameHistoryIsEmpty(model);
+        ticTacToeService.gameHistoryIsEmpty(model);
         return "/goodBye";
     }
 
     @GetMapping("/gameplay/final-result")
     public String showRating(@RequestParam(name = "id", required = false) String id, Model model) {
-        gameService.gameHistoryIsEmpty(model);
+        ticTacToeService.gameHistoryIsEmpty(model);
         model.addAttribute("continue", "Можно начать новую игру с внесением новых имен ;)");
-        gameService.getRating(model);
+        ticTacToeService.getRating(model);
         try {
-            gameService.showGameHistory(id, model);
+            ticTacToeService.showGameHistory(id, model);
         } catch (GameHistoryNotFoundException | InputIdIsNullStringException e) {
             model.addAttribute("gameHistoryNotFound", e.getMessage());
         }
