@@ -335,9 +335,9 @@ public class TicTacToeService implements GameService {
         for (Step s : fields.getSteps()) {
             s.setGameHistory(fields.getGameHistory());
         }
-        fields.getGameHistory().setSteps(fields.getSteps());
+//        fields.getGameHistory().setSteps(fields.getSteps());
         gameHistoryRepo.save(fields.getGameHistory());
-//        stepRepo.saveAll(fields.getSteps());
+        stepRepo.saveAll(fields.getSteps());
     }
 
     @Override
