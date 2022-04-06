@@ -71,7 +71,7 @@ public class GameController {
         ticTacToeService.drawMove(ticTacToeService.coordinateValid(coordinate)[0],
                 ticTacToeService.coordinateValid(coordinate)[1]);
         // ищем победителя или ничью
-        if (fields.getMovesCounter()> 4 && fields.getMovesCounter() < 9) {
+        if (fields.getMovesCounter() > 4 && fields.getMovesCounter() < 9) {
             fields.setGameOver(ticTacToeService.winnerSearch(fields.getPLAYING_FIELD()));
         } else if (fields.getMovesCounter() > 8) fields.setGameOver(true);
         // Выводим результаты если игра окончена

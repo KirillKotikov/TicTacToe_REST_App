@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class TicTacToeFields {
 
-        // Массив игрового поля
+    // Массив игрового поля
     private final String[][] PLAYING_FIELD = new String[][]{
             {"|1|", "|2|", "|3|"},
             {"|4|", "|5|", "|6|"},

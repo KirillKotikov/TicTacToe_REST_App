@@ -24,9 +24,6 @@ public class Player {
     private int numberOfDraws = 0;
     private int rating = 0;
 
-//    @ManyToMany(mappedBy = "players", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<GameHistory> gameHistories;
-
     @ManyToMany
     @JoinTable(
             name = "player_game_histories",
